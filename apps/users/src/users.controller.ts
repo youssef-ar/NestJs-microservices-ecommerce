@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Patch, Post, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthDto } from './dto';
 import { JwtGuard } from './guard';
@@ -14,6 +14,7 @@ export class UsersController {
     return this.usersService.signUp(dto);
   }
   @Post('signin')
+  @HttpCode(HttpStatus.OK)
   async signIn(@Body() dto: AuthDto) {
     return this.usersService.signIn(dto);
   }
