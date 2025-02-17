@@ -6,7 +6,10 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "prisma:test:deploy": "dotenv -e ./apps/users/.env.test -- npx prisma migrate deploy --schema ./apps/users/prisma/schema.prisma",
+    "prisma:test:deploy:users": "dotenv -e ./apps/users/.env.test -- npx prisma migrate deploy --schema ./apps/users/prisma/schema.prisma",
+    "db:test:rm:users": "docker compose rm users-test-db -s -f -v",
+    "db:test:up:users": "docker compose up users-test-db -d",
+    "db:test:restart:users": "npm run db:test:rm:users && npm run db:test:up:users && node -e \"setTimeout(()=>{}, 5000)\" && npm run prisma:test:deploy:users",
     "build": "nest build",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
