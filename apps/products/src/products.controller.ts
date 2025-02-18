@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto';
 
@@ -6,12 +6,12 @@ import { CreateProductDto } from './dto';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
   
-  @Get()
+  @Get('products')
   async getAllProducts() {
     return this.productsService.getAllProducts();
   }
 
-  @Get('/:id')
+  @Get('products/:id')
   async getProductById(@Param('id') id: string) {
     const productId = parseInt(id, 10); 
     if (isNaN(productId)) {
@@ -20,12 +20,12 @@ export class ProductsController {
     return this.productsService.getProductById(productId);
   }
   
-  @Post()
+  @Post('products')
   async createProduct(@Body() dto: CreateProductDto) {
     return this.productsService.createProduct(dto);
   }
 
-  @Patch('/:id')
+  @Patch('products/:id')
   async updateProduct(@Param('id') id: string, @Body() dto) {
     const productId = parseInt(id, 10); 
     if (isNaN(productId)) {
@@ -34,7 +34,7 @@ export class ProductsController {
     return this.productsService.updateProduct(productId, dto);
   }
 
-  @Delete('/:id')
+  @Delete('products/:id')
   async deleteProduct(@Param('id') id: string) {
     const productId = parseInt(id, 10); 
     if (isNaN(productId)) {
@@ -43,39 +43,58 @@ export class ProductsController {
     return this.productsService.deleteProduct(productId);
   }
 
-  @Get('/category/:id')
-  async getProductsByCategory(@Param('id') id: string) {
-    const productId = parseInt(id, 10); 
-    if (isNaN(productId)) {
-      throw new Error('Invalid product ID'); 
-    }
-    return this.productsService.getProductsByCategory(productId);
+  @Get('products')
+  async getFilteredProducts(
+    @Query('categoryId') categoryId?: string,
+    @Query('minPrice') minPrice?: string,
+    @Query('maxPrice') maxPrice?: string,
+    @Query('rating') rating?: string,
+    @Query('search') search?: string
+  ) {
+
+    const filters = {
+      categoryId: categoryId ? parseInt(categoryId, 10) : undefined,
+      minPrice: minPrice ? parseInt(minPrice, 10) : undefined,
+      maxPrice: maxPrice ? parseInt(maxPrice, 10) : undefined,
+      rating: rating ? parseInt(rating, 10) : undefined,
+      search: search ?? undefined,
+    };
+
+    if (filters.categoryId && isNaN(filters.categoryId)) throw new Error('Invalid category ID');
+    if (filters.minPrice && isNaN(filters.minPrice)) throw new Error('Invalid min price');
+    if (filters.maxPrice && isNaN(filters.maxPrice)) throw new Error('Invalid max price');
+    if (filters.rating && isNaN(filters.rating)) throw new Error('Invalid rating');
+
+    return this.productsService.getFilteredProducts(filters);
+
   }
 
-  @Get('/search/:query')
-  async searchProducts(@Param('query') query: string) {
-    return this.productsService.searchProducts(query);
+  @Post('/categories')
+  async createCategory(@Body('name') name: string) {
+    return this.productsService.createCategory(name);
   }
 
-  @Get('/price-range/:min/:max') 
-  async getProductsByPriceRange(@Param('min') min: string, @Param('max') max: string) {
-    const minPrice = parseInt(min, 10); 
-    if (isNaN(minPrice)) {
-      throw new Error('Invalid min Price'); 
-    }
-    const maxPrice = parseInt(max, 10); 
-    if (isNaN(maxPrice)) {
-      throw new Error('Invalid max Price'); 
-    }
-    return this.productsService.getProductsByPriceRange(minPrice, maxPrice);
+  @Get('/categories')
+  async getAllCategories() {
+    return this.productsService.getAllCategories();
   }
 
-  @Get('/rating/:rating')
-  async getProductsByRating(@Param('rating') rating: string) {
-    const productRating = parseInt(rating, 10); 
-    if (isNaN(productRating)) {
-      throw new Error('Invalid product Rating'); 
-    }
-    return this.productsService.getProductsByRating(productRating);
+  @Post('/categories/:categoryId/products/:productId')
+  async addProductToCategory(
+    @Param('productId') productId: string,
+    @Param('categoryId') categoryId: string
+  ) {
+    const parsedProductId = parseInt(productId, 10);
+    const parsedCategoryId = parseInt(categoryId, 10);
+    if (isNaN(parsedProductId)) throw new Error('Invalid product ID');
+    if (isNaN(parsedCategoryId)) throw new Error('Invalid category ID');
+    return this.productsService.addProductToCategory(parsedProductId, parsedCategoryId);
   }
+
+  @Delete('/categories/:id')
+  async deleteCategory(@Param('id') id: string) {
+    const categoryId = parseInt(id, 10);
+    if (isNaN(categoryId)) throw new Error('Invalid category ID'); 
+    return this.productsService.deleteCategory(categoryId);
+}
 }

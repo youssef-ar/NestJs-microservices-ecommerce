@@ -3,25 +3,25 @@ import { IsNumber, IsOptional, IsString } from "class-validator";
 export class EditProductDto {
     @IsString()
     @IsOptional()
-    name: string;
+    name?: string;
     
     @IsString()
     @IsOptional()
-    description: string;
+    description?: string;
     
     @IsNumber()
     @IsOptional()
-    price: number;
+    price?: number;
     
     @IsString()
     @IsOptional()
-    categoryId: number;
+    categoryId?: number;
     
     @IsString()
     @IsOptional()
-    image: string;
+    image?: string;
     
     @IsString()
     @IsOptional()
-    brand: string;
+    brand?: string;
 }

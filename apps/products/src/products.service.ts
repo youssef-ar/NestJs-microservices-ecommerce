@@ -72,87 +72,7 @@ export class ProductsService {
     return product
   }
 
-  // search products
-  async searchProducts(query: string) {
-    const products = await this.prisma.product.findMany({
-      where: {
-        OR: [
-          {
-            name: {
-              contains: query,
-              mode: 'insensitive',
-            },
-          },
-          {
-            description: {
-              contains: query,
-              mode: 'insensitive',
-            },
-          },
-          {
-            brand: {
-              contains: query,
-              mode: 'insensitive',
-            },
-          },
-        ],
-      },
-    });
-    if(!products){
-      throw new NotFoundException('No products found');
-    }
-    return products;
-  }
 
-  // get products by category
-  async getProductsByCategory(categoryId: number) {
-    const products = await this.prisma.product.findMany({
-      where: {
-        categoryId,
-      },
-    });
-    if(!products){
-      throw new NotFoundException('No products found');
-    }
-    return products;
-  }
-
-  // get products by price range
-  async getProductsByPriceRange(min: number, max: number) {
-    const products = await this.prisma.product.findMany({
-      where: {
-        AND: [
-          {
-            price: {
-              gte: min,
-            },
-          },
-          {
-            price: {
-              lte: max,
-            },
-          },
-        ],
-      },
-    });
-    if(!products){
-      throw new NotFoundException('No products found');
-    }
-    return products;
-  }
-  // get products by rating
-  async getProductsByRating(rating: number) {
-    const products = await this.prisma.product.findMany({
-      where: {
-        rating,
-      },
-    });
-    if(!products){
-      throw new NotFoundException('No products found');
-    }
-    return products;
-  }
-  
   //create category
   async createCategory(name: string) {
     const category = await this.prisma.category.create({
@@ -179,5 +99,70 @@ export class ProductsService {
     });
     return product;
   }
+
+
+  // filter products
+  async getFilteredProducts(filters: {
+    categoryId?: number;
+    minPrice?: number;
+    maxPrice?: number;
+    rating?: number;
+    search?: string;
+  }) {
+    const query: any = {};
+  
+    if (filters.categoryId) {
+      query.categoryId = filters.categoryId;
+    }
+  
+    if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
+      query.price = {};
+      if (filters.minPrice !== undefined) query.price.gte = filters.minPrice;
+      if (filters.maxPrice !== undefined) query.price.lte = filters.maxPrice;
+    }
+  
+    if (filters.rating) {
+      query.rating = filters.rating;
+    }
+  
+    if (filters.search) {
+      query.OR = [
+        {
+          name: {
+            contains: filters.search,
+            mode: 'insensitive',
+          },
+        },
+        {
+          description: {
+            contains: filters.search,
+            mode: 'insensitive',
+          },
+        },
+        {
+          brand: {
+            contains: filters.search,
+            mode: 'insensitive',
+          },
+        },
+      ];
+    }
+  
+    return this.prisma.product.findMany({ where: query });
+  }
+
+  // delete category
+  async deleteCategory(id: number) {
+    const category = await this.prisma.category.delete({
+      where: {
+        id,
+      },
+    });
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
+    return category;
+  }
+
   
 }

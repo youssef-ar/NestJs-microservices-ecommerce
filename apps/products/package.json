@@ -6,10 +6,10 @@
     "test": "test"
   },
   "scripts": {
-    "prisma:test:deploy:users": "dotenv -e ./apps/users/.env.test -- npx prisma migrate deploy --schema ./apps/users/prisma/schema.prisma",
-    "db:test:rm:users": "docker compose rm users-test-db -s -f -v",
-    "db:test:up:users": "docker compose up users-test-db -d",
-    "db:test:restart:users": "npm run db:test:rm:users && npm run db:test:up:users && node -e \"setTimeout(()=>{}, 5000)\" && npm run prisma:test:deploy:users",
+    "prisma:test:deploy:products": "dotenv -e ./.env.test -- npx prisma migrate deploy --schema ./prisma/schema.prisma",
+    "db:test:rm:products": "docker compose rm products-test-db -s -f -v",
+    "db:test:up:products": "docker compose up products-test-db -d",
+    "db:test:restart:products": "npm run db:test:rm:products && npm run db:test:up:products && node -e \"setTimeout(()=>{}, 5000)\" && npm run prisma:test:deploy:products",
     "build": "nest build",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
@@ -22,7 +22,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./apps/ecommerce/test/jest-e2e.json",
-    "test:e2e:users": "dotenv -e ./apps/users/.env.test -- jest --config ./apps/users/test/jest-e2e.json --runTestsByPath ./apps/users/test/app.e2e-spec.ts"
+    "test:e2e:products": "dotenv -e ./.env.test -- jest --config ./test/jest-e2e.json --runTestsByPath ./test/app.e2e-spec.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.9",
