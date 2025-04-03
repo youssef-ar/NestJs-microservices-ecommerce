@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma/prisma.service';
-import { Session } from 'inspector/promises';
 
 @Injectable()
 export class CartService {
@@ -9,6 +8,7 @@ export class CartService {
   // Add a product to the cart
   async addProductToCart(session: string, productId: number, quantity: number) {
     try {
+      
       // find cart by session
       let cart = await this.prisma.cart.findFirst({
         where: { session },
@@ -80,12 +80,13 @@ export class CartService {
   // Get the cart
   async getCart(session: string) {
     try {
+      console.log(session);
       // Find the cart
       const cart = await this.prisma.cart.findFirst({
         where: { session },
         include: { cartItems: true },
       });
-  
+      
       if (!cart) {
         throw new Error('Cart not found');
       }

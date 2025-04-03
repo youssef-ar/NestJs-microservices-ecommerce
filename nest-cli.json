@@ -10,6 +10,15 @@
   "monorepo": true,
   "root": "apps/users",
   "projects": {
+    "cart": {
+      "type": "application",
+      "root": "apps/cart",
+      "entryFile": "main",
+      "sourceRoot": "apps/cart/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/cart/tsconfig.app.json"
+      }
+    },
     "inventory": {
       "type": "application",
       "root": "apps/inventory",
