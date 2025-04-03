@@ -1,15 +1,15 @@
 {
-  "name": "ecommerce",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
-  "private": true,
-  "license": "UNLICENSED",
+  "name": "cart",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
   "scripts": {
-    "prisma:test:deploy:users": "dotenv -e ./apps/users/.env.test -- npx prisma migrate deploy --schema ./apps/users/prisma/schema.prisma",
-    "db:test:rm:users": "docker compose rm users-test-db -s -f -v",
-    "db:test:up:users": "docker compose up users-test-db -d",
-    "db:test:restart:users": "npm run db:test:rm:users && npm run db:test:up:users && node -e \"setTimeout(()=>{}, 5000)\" && npm run prisma:test:deploy:users",
+    "prisma:test:deploy:carts": "dotenv -e ./.env.test -- npx prisma migrate deploy --schema ./prisma/schema.prisma",
+    "db:test:rm:carts": "docker compose rm carts-test-db -s -f -v",
+    "db:test:up:carts": "docker compose up carts-test-db -d",
+    "db:test:restart:carts": "npm run db:test:rm:carts && npm run db:test:up:carts && node -e \"setTimeout(()=>{}, 5000)\" && npm run prisma:test:deploy:products",
     "build": "nest build",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
@@ -22,24 +22,20 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./apps/ecommerce/test/jest-e2e.json",
-    "test:e2e:users": "dotenv -e ./apps/users/.env.test -- jest --config ./apps/users/test/jest-e2e.json --runTestsByPath ./apps/users/test/app.e2e-spec.ts"
+    "test:e2e:carts": "dotenv -e ./.env.test -- jest --config ./test/jest-e2e.json --runTestsByPath ./test/app.e2e-spec.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.9",
     "@nestjs/config": "^4.0.0",
     "@nestjs/core": "^11.0.1",
-    "@nestjs/jwt": "^11.0.0",
     "@nestjs/microservices": "^11.0.9",
-    "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
-    "@prisma/client": "^6.3.1",
-    "argon2": "^0.41.1",
+    "@prisma/client": "^6.4.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "dotenv-cli": "^8.0.0",
+    "express-session": "^1.18.1",
     "pactum": "^3.7.6",
-    "passport": "^0.7.0",
-    "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
@@ -52,6 +48,7 @@
     "@swc/cli": "^0.6.0",
     "@swc/core": "^1.10.7",
     "@types/express": "^5.0.0",
+    "@types/express-session": "^1.18.1",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.7",
     "@types/supertest": "^6.0.2",
@@ -91,5 +88,8 @@
     "roots": [
       "<rootDir>/apps/"
     ]
-  }
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }
