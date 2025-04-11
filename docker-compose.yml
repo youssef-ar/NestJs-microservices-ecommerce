@@ -145,6 +145,75 @@ services:
           target: /usr/src/app/apps/cart/src
         - path: ./package.json
           action: rebuild
+  inventory-db:
+    image: postgres:13
+    env_file:
+      - ./apps/cart/.env
+    ports:
+      - '5439:5432'  
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --requirepass yourpassword
+    networks:
+      - app-network
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "${RABBITMQ_PORT}:5672"
+      - "${RABBITMQ_MANAGEMENT_PORT}:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - app-network
+  inventory:
+    build:
+      context: .
+      dockerfile: ./apps/inventory/Dockerfile
+      target: development
+    command: npm run start:dev inventory
+    env_file:
+      - ./apps/inventory/.env
+    depends_on:
+      inventory-db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+    volumes:
+      - .:/usr/src/app:delegated
+      - /usr/src/app/node_modules
+    ports:
+      - 3004:3004
+    networks:
+      - app-network
+    develop:
+      watch:
+        - path: ./apps/inventory/src
+          action: sync
+          target: /usr/src/app/apps/inventory/src
+        - path: ./package.json
+          action: rebuild
+        
+
+volumes:
+  redis_data:
+  rabbitmq_data:
 networks:
   app-network:  
     driver: bridge

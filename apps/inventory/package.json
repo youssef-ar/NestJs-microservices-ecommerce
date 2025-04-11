@@ -22,9 +22,14 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./apps/ecommerce/test/jest-e2e.json",
-    "test:e2e:inventory": "dotenv -e ./.env.test -- jest --config ./test/jest-e2e.json --runTestsByPath ./test/app.e2e-spec.ts"
+    "test:e2e:inventory": "dotenv -e ./.env.test -- jest --config ./test/jest-e2e.json --runTestsByPath ./test/app.e2e-spec.ts",
+    "prisma:generate": "npx prisma generate --schema ./prisma/schema.prisma",
+    "prisma:migrate": "npx prisma migrate deploy --schema ./prisma/schema.prisma",
+    "prisma:setup": "npm run prisma:migrate && npm run prisma:generate",
+    "start:dev:with-migrations": "npm run prisma:setup && npm run start:dev"
   },
   "dependencies": {
+    "@golevelup/nestjs-rabbitmq": "^5.7.0",
     "@nestjs/common": "^11.0.9",
     "@nestjs/config": "^4.0.0",
     "@nestjs/core": "^11.0.1",
@@ -36,6 +41,7 @@
     "dotenv-cli": "^8.0.0",
     "express-session": "^1.18.1",
     "pactum": "^3.7.6",
+    "redis": "^4.7.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
@@ -51,6 +57,7 @@
     "@types/express-session": "^1.18.1",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.7",
+    "@types/redis": "^4.0.11",
     "@types/supertest": "^6.0.2",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
