@@ -1,8 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { InventoryModule } from './inventory.module';
+import { ConfigService } from '@nestjs/config';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(InventoryModule);
-  await app.listen(process.env.port ?? 3000);
+  const configService = app.get(ConfigService);
+  app.useGlobalPipes(new ValidationPipe());
+  await app.listen(process.env.port ?? 3004);
+  console.log(`Inventory service running on ${await app.getUrl()}`);
 }
 bootstrap();
