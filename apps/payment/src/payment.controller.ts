@@ -1,12 +1,17 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param, Post } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 
-@Controller()
+@Controller('payments')
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
-  @Get()
-  getHello(): string {
-    return this.paymentService.getHello();
+  @Get(':orderId')
+  async getPaymentStatus(@Param('orderId') orderId: string) {
+    return this.paymentService.getPaymentStatus(orderId);
+  }
+
+  @Post('refund/:orderId')
+  async refundPayment(@Param('orderId') orderId: string) {
+    return this.paymentService.handleRefund(orderId);
   }
 }
