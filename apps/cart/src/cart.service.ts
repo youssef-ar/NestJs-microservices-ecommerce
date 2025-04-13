@@ -5,6 +5,33 @@ import { PrismaService } from './prisma/prisma.service';
 export class CartService {
   constructor(private prisma: PrismaService) {}
 
+  async createEmptyCart(userId: string) {
+    try {
+      // Create a new cart for the user
+      const cart = await this.prisma.cart.create({
+        data: {
+          session: userId,
+          cartItems: {
+            create: [], 
+          },
+        },
+      });
+      return cart;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async deleteCart(userId: string) {
+    try {
+      // Delete the cart for the user
+      await this.prisma.cart.deleteMany({
+        where: { session: userId },
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
   // Add a product to the cart
   async addProductToCart(session: string, productId: number, quantity: number) {
     try {
