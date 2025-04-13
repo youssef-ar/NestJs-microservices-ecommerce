@@ -6,10 +6,11 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UpdateDto } from './dto/update.dto';
+import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService, private jwtService: JwtService, private config: ConfigService ) {}
+  constructor(private prisma: PrismaService, private jwtService: JwtService, private config: ConfigService ,private readonly amqp: AmqpConnection) {}
   // sign up
  async signUp(dto: AuthDto) {
     try{
@@ -23,6 +24,11 @@ export class UsersService {
           firstName: dto.firstName,
           lastName: dto.lastName,
         },
+    });
+    this.amqp.publish('users', 'user.created', {
+      id: user.id,
+      email: user.email,
+      createdAt: user.createdAt
     });
     const { hash: _, ...result } = user;
     return result;
@@ -125,6 +131,7 @@ export class UsersService {
         id,
       },
     });
+    this.amqp.publish('users', 'user.deleted', { userId: id });
     return user;
   }
 
