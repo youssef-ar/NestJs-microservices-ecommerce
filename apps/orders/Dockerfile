@@ -24,7 +24,7 @@ COPY ./apps/orders ./apps/orders
 RUN npm run build orders
 
 # Command to run the application
-CMD ["npm", "run", "start:dev", "orders"]
+CMD ["npm", "run", "start:migrate:dev", "orders"]
 
 FROM node:alpine as production
 

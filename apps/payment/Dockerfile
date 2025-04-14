@@ -2,30 +2,26 @@ FROM node:alpine As development
 
 WORKDIR /usr/src/app
 
-# Copy configuration and package files first
-COPY ./apps/inventory/package*.json ./
+COPY ./apps/payment/package*.json ./
+
 COPY tsconfig.json ./
 COPY tsconfig.build.json ./
 COPY nodemon.json ./
 COPY nest-cli.json ./
 COPY eslint.config.mjs ./
 
-# Install dependencies
 RUN npm install
 
-# Create directories
-RUN mkdir -p apps/inventory
+RUN mkdir apps
+RUN mkdir apps/payment
 
-# Copy application code
-COPY ./apps/inventory ./apps/inventory
+COPY ./apps/payment ./apps/payment
 
+RUN npx prisma generate --schema ./apps/payment/prisma/schema.prisma
 
+RUN npm run build payment
 
-# Build the application
-RUN npm run build inventory
-
-# Command to run the application
-CMD ["npm", "run", "start:migrate:dev", "inventory"]
+CMD ["npm", "run", "start:migrate:dev", "orders"]
 
 FROM node:alpine as production
 
@@ -34,7 +30,7 @@ ENV NODE_ENV=${NODE_ENV}
 
 WORKDIR /usr/src/app
 
-COPY ./apps/inventory/package*.json ./
+COPY ./apps/payment/package*.json ./
 
 COPY tsconfig.json ./
 COPY tsconfig.build.json ./
@@ -44,9 +40,7 @@ COPY eslint.config.js ./
 
 RUN npm install --only=production
 
-COPY ./apps/inventory .
-
-RUN npx prisma generate --schema=./apps/inventory/prisma/schema.prisma
+COPY ./apps/payment .
 
 COPY --from=development /usr/src/app/dist ./dist
 

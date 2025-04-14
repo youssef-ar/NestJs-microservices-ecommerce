@@ -22,7 +22,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./apps/ecommerce/test/jest-e2e.json",
-    "test:e2e:carts": "dotenv -e ./.env.test -- jest --config ./test/jest-e2e.json --runTestsByPath ./test/app.e2e-spec.ts"
+    "test:e2e:carts": "dotenv -e ./.env.test -- jest --config ./test/jest-e2e.json --runTestsByPath ./test/app.e2e-spec.ts",
+    "start:migrate:dev": "prisma migrate deploy && npm run start:dev"
+
   },
   "dependencies": {
     "@nestjs/common": "^11.0.9",
