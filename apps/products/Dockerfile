@@ -21,6 +21,8 @@ RUN npx prisma generate --schema ./apps/products/prisma/schema.prisma
 
 RUN npm run build products
 
+CMD ["npm", "run", "start:migrate:dev", "orders"]
+
 FROM node:alpine as production
 
 ARG NODE_ENV=production

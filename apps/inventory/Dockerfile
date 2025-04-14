@@ -25,7 +25,7 @@ COPY ./apps/inventory ./apps/inventory
 RUN npm run build inventory
 
 # Command to run the application
-CMD ["npm", "run", "start:dev:with-migrations", "inventory"]
+CMD ["npm", "run", "start:migrate:dev", "inventory"]
 
 FROM node:alpine as production
 

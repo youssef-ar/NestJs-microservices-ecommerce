@@ -26,7 +26,8 @@
     "prisma:generate": "npx prisma generate --schema ./prisma/schema.prisma",
     "prisma:migrate": "npx prisma migrate deploy --schema ./prisma/schema.prisma",
     "prisma:setup": "npm run prisma:migrate && npm run prisma:generate",
-    "start:dev:with-migrations": "npm run prisma:setup && npm run start:dev"
+    "start:dev:with-migrations": "npm run prisma:setup && npm run start:dev",
+    "start:migrate:dev": "prisma migrate deploy && npm run start:dev"
   },
   "dependencies": {
     "@golevelup/nestjs-rabbitmq": "^5.7.0",
