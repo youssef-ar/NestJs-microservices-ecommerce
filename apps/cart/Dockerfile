@@ -26,7 +26,7 @@ RUN npx prisma generate --schema=./apps/cart/prisma/schema.prisma
 RUN npm run build cart
 
 # Command to run the application
-CMD ["npm", "run", "start:migrate:prod", "cart"]
+CMD ["npm", "run", "start:migrate:dev", "cart"]
 
 FROM node:alpine as production
 
