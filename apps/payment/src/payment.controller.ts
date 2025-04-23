@@ -1,5 +1,6 @@
-import { Controller, Get, Param, Post } from '@nestjs/common';
+import { Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { PaymentService } from './payment.service';
+import { AdminGuard } from '@app/shared';
 
 @Controller('payments')
 export class PaymentController {
@@ -11,6 +12,7 @@ export class PaymentController {
   }
 
   @Post('refund/:orderId')
+  @UseGuards(AdminGuard)
   async refundPayment(@Param('orderId') orderId: string) {
     return this.paymentService.handleRefund(orderId);
   }

@@ -6,6 +6,8 @@ import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { RedisModule } from './redis/redis.module';
+import { InventoryConsumer } from './consumers/inventory.consumer';
+import { PaymentConsumer } from './consumers/payment.consumer';
 
 @Module({
   imports: [
@@ -35,6 +37,6 @@ import { RedisModule } from './redis/redis.module';
     RedisModule,
   ],
   controllers: [OrdersController],
-  providers: [OrdersService],
+  providers: [OrdersService, InventoryConsumer, PaymentConsumer],
 })
 export class OrdersModule {}

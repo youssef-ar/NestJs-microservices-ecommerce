@@ -1,0 +1,18 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: payment
+  namespace: ecommerce
+spec:
+  entryPoints:
+    - web
+  routes:
+    - kind: Rule
+      match: Host(`localhost`) && PathPrefix(`/payment`)
+      middlewares:
+        - name: strip-api-prefixes
+      services:
+        - kind: Service
+          name: payment
+          port: 3001
+          scheme: http

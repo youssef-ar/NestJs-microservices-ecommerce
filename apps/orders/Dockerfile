@@ -19,6 +19,8 @@ RUN mkdir -p apps/orders
 # Copy application code
 COPY ./apps/orders ./apps/orders
 
+# Generate Prisma client before building
+RUN npx prisma generate --schema=./apps/orders/prisma/schema.prisma
 
 # Build the application
 RUN npm run build orders

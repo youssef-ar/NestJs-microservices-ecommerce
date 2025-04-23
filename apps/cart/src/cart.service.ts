@@ -5,14 +5,14 @@ import { PrismaService } from './prisma/prisma.service';
 export class CartService {
   constructor(private prisma: PrismaService) {}
 
-  async createEmptyCart(userId: string) {
+  async createEmptyCart(userId: number) {
     try {
-      // Create a new cart for the user
       const cart = await this.prisma.cart.create({
         data: {
-          session: userId,
+          userId,
+          session: '',
           cartItems: {
-            create: [], 
+            create: [],
           },
         },
       });
@@ -22,31 +22,28 @@ export class CartService {
     }
   }
 
-  async deleteCart(userId: string) {
+  async deleteCart(userId: number) {
     try {
-      // Delete the cart for the user
-      await this.prisma.cart.deleteMany({
-        where: { session: userId },
-      });
+      await this.prisma.cart.deleteMany({ where: { userId } });
     } catch (error) {
       throw new Error(error);
     }
   }
-  // Add a product to the cart
-  async addProductToCart(session: string, productId: number, quantity: number) {
+
+  async addProductToCart({ session, userId }: { session?: string; userId?: string }, productId: number, quantity: number) {
     try {
-      
-      // find cart by session
+      const whereClause = userId ? { userId } : { session };
+
       let cart = await this.prisma.cart.findFirst({
-        where: { session },
+        where: whereClause,
         include: { cartItems: true },
       });
-  
+
       if (!cart) {
-        //Create a new cart if not found
         cart = await this.prisma.cart.create({
           data: {
-            session,
+            userId: userId || undefined,
+            session: session || '',
             cartItems: {
               create: [{ productId, quantity }],
             },
@@ -54,118 +51,91 @@ export class CartService {
           include: { cartItems: true },
         });
       } else {
-        // Check if the product already exists in the cart
         const existingItem = cart.cartItems.find((item) => item.productId === productId);
-  
         if (existingItem) {
-          // Update the quantity if the product is already in the cart
           await this.prisma.cartItem.update({
             where: { id: existingItem.id },
             data: { quantity: existingItem.quantity + quantity },
           });
         } else {
-          // Add new product to cart
           await this.prisma.cartItem.create({
             data: { cartId: cart.id, productId, quantity },
           });
         }
       }
-  
     } catch (error) {
       throw new Error(error);
     }
   }
-      
-    
-  // Remove a product from the cart
-  async removeProductFromCart(session: string, productId: number) {
+
+  async removeProductFromCart({ session, userId }: { session?: string; userId?: string }, productId: number) {
     try {
-      // Find the cart
+      const whereClause = userId ? { userId } : { session };
+
       const cart = await this.prisma.cart.findFirst({
-        where: { session },
+        where: whereClause,
         include: { cartItems: true },
       });
-  
-      if (!cart) {
-        throw new Error('Cart not found');
-      }
-  
-      // Find the cart item
+
+      if (!cart) throw new Error('Cart not found');
+
       const cartItem = cart.cartItems.find((item) => item.productId === productId);
-  
-      if (!cartItem) {
-        throw new Error('Product not found in cart');
-      }
-  
-      // Remove the product from the cart
+      if (!cartItem) throw new Error('Product not found in cart');
+
       await this.prisma.cartItem.delete({ where: { id: cartItem.id } });
     } catch (error) {
       throw new Error(error);
     }
   }
 
-  // Get the cart
-  async getCart(session: string) {
+  async getCart({ session, userId }: { session?: string; userId?: string }) {
     try {
-      console.log(session);
-      // Find the cart
+      const whereClause = userId ? { userId } : { session };
+
       const cart = await this.prisma.cart.findFirst({
-        where: { session },
+        where: whereClause,
         include: { cartItems: true },
       });
-      
-      if (!cart) {
-        throw new Error('Cart not found');
-      }
-  
+
+      if (!cart) throw new Error('Cart not found');
+
       return cart;
     } catch (error) {
       throw new Error(error);
-  }}
+    }
+  }
 
-  // Clear the cart
-
-  async clearCart(session: string) {
+  async clearCart({ session, userId }: { session?: string; userId?: string }) {
     try {
-      // Find the cart
+      const whereClause = userId ? { userId } : { session };
+
       const cart = await this.prisma.cart.findFirst({
-        where: { session },
+        where: whereClause,
         include: { cartItems: true },
       });
-  
-      if (!cart) {
-        throw new Error('Cart not found');
-      }
-  
-      // Remove all products from the cart
+
+      if (!cart) throw new Error('Cart not found');
+
       await this.prisma.cartItem.deleteMany({ where: { cartId: cart.id } });
     } catch (error) {
       throw new Error(error);
     }
   }
 
-  // update the quantity of a product in the cart
-
-  async updateProductQuantity(session: string, productId: number, quantity: number) {
+  async updateProductQuantity({ session, userId }: { session?: string; userId?: string }, productId: number, quantity: number) {
     try {
-      // Find the cart
+      const whereClause = userId ? { userId } : { session };
+
       const cart = await this.prisma.cart.findFirst({
-        where: { session },
+        where: whereClause,
         include: { cartItems: true },
       });
-  
-      if (!cart) {
-        throw new Error('Cart not found');
-      }
-  
-      // Find the cart item
+
+      if (!cart) throw new Error('Cart not found');
+
       const cartItem = cart.cartItems.find((item) => item.productId === productId);
-  
-      if (!cartItem) {
-        throw new Error('Product not found in cart');
-      }
-  
-      // Update the quantity of the product
+      if (!cartItem) throw new Error('Product not found in cart');
+
       await this.prisma.cartItem.update({
         where: { id: cartItem.id },
         data: { quantity },
@@ -174,6 +144,4 @@ export class CartService {
       throw new Error(error);
     }
   }
-
-
 }
