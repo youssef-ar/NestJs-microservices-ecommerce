@@ -12,7 +12,10 @@ export class UsersConsumer {
     queue: 'cart_users_queue'
   })
   async handleUserCreated(event: { userId: string; email: string }) {
-    await this.cartService.createEmptyCart(event.userId);
+    console.log('User created event received:', event);
+    const userId = parseInt(event.userId, 10); 
+    await this.cartService.createEmptyCart(userId);
+    console.log('Empty cart created for user:', event.userId);
   }
 
   @RabbitRPC({
@@ -21,6 +24,7 @@ export class UsersConsumer {
     queue: 'cart_users_queue'
   })
   async handleUserDeleted(event: { userId: string }) {
-    await this.cartService.deleteCart(event.userId);
+    const userId = parseInt(event.userId, 10); 
+    await this.cartService.deleteCart(userId);
   }
 }

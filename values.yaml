@@ -1,0 +1,4 @@
+rabbitmq:
+  username: "admin"
+  password: "admin123"
+  erlangCookie: "secretcookie"

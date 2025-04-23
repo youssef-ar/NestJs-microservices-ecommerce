@@ -1,0 +1,15 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-api-prefixes
+  namespace: ecommerce
+spec:
+  stripPrefix:
+    forceSlash: false
+    prefixes:
+      - /auth
+      - /products
+      - /inventory
+      - /carts
+      - /orders
+      - /payment

@@ -1,11 +1,11 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Patch, Post, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthDto } from './dto';
-import { JwtGuard } from './guard';
+import {JwtGuard} from "@app/shared"
 import { GetUser } from './decorator/get-user.decorator';
 import { UpdateDto } from './dto/update.dto';
 
-@Controller('auth')
+@Controller('')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 

@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto';
+import {AdminGuard} from "@app/shared"
 
 @Controller()
 export class ProductsController {
@@ -21,11 +22,13 @@ export class ProductsController {
   }
   
   @Post('products')
+  @UseGuards(AdminGuard)
   async createProduct(@Body() dto: CreateProductDto) {
     return this.productsService.createProduct(dto);
   }
 
   @Patch('products/:id')
+  @UseGuards(AdminGuard)
   async updateProduct(@Param('id') id: string, @Body() dto) {
     const productId = parseInt(id, 10); 
     if (isNaN(productId)) {
@@ -35,6 +38,7 @@ export class ProductsController {
   }
 
   @Delete('products/:id')
+  @UseGuards(AdminGuard)
   async deleteProduct(@Param('id') id: string) {
     const productId = parseInt(id, 10); 
     if (isNaN(productId)) {
@@ -70,6 +74,7 @@ export class ProductsController {
   }
 
   @Post('/categories')
+  @UseGuards(AdminGuard)
   async createCategory(@Body('name') name: string) {
     return this.productsService.createCategory(name);
   }
@@ -80,6 +85,7 @@ export class ProductsController {
   }
 
   @Post('/categories/:categoryId/products/:productId')
+  @UseGuards(AdminGuard)
   async addProductToCategory(
     @Param('productId') productId: string,
     @Param('categoryId') categoryId: string
@@ -92,6 +98,7 @@ export class ProductsController {
   }
 
   @Delete('/categories/:id')
+  @UseGuards(AdminGuard)
   async deleteCategory(@Param('id') id: string) {
     const categoryId = parseInt(id, 10);
     if (isNaN(categoryId)) throw new Error('Invalid category ID'); 

@@ -4,6 +4,7 @@ import { CartService } from './cart.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
+import { UsersConsumer } from './consumers/users.consumer';
 
 @Module({
   imports: [
@@ -29,7 +30,7 @@ import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
     
   ],
   controllers: [CartController],
-  providers: [CartService],
+  providers: [CartService, UsersConsumer],
 })
 export class CartModule {}
 

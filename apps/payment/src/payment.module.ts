@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { RedisModule } from '../../redis/redis.module';
 import { RedisModule } from './redis/redis.module';
+import { OrdersConsumer } from './consumers/orders.consumer';
 
 @Module({
   imports: [
@@ -27,6 +28,6 @@ import { RedisModule } from './redis/redis.module';
     }),
   ],
   controllers: [PaymentController],
-  providers: [PaymentService],
+  providers: [PaymentService, OrdersConsumer],
 })
 export class PaymentModule {}

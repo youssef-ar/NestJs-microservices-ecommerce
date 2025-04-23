@@ -30,6 +30,7 @@ export class UsersService {
       email: user.email,
       createdAt: user.createdAt
     });
+    console.log('User created', user);
     const { hash: _, ...result } = user;
     return result;
 

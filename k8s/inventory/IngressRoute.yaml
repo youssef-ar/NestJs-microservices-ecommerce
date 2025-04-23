@@ -1,0 +1,18 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: inventory
+  namespace: ecommerce
+spec:
+  entryPoints:
+    - web
+  routes:
+    - kind: Rule
+      match: Host(`localhost`) && PathPrefix(`/inventory`)
+      middlewares:
+        - name: strip-api-prefixes
+      services:
+        - kind: Service
+          name: inventory
+          port: 3001
+          scheme: http
